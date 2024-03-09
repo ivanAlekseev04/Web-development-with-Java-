@@ -1,1 +1,1 @@
-New text for the test.txt file
+Updated text to get along merge conflict
