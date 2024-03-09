@@ -1,1 +1,1 @@
-Text in main branch for rebase conflict file
+New text to eliminate rebase conflict
