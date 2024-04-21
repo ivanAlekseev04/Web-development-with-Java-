@@ -1,56 +1,30 @@
 package com.fmi.web.lab.raceeventmanagement.model;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Racer {
-    private Integer id;
+    @NotNull(message = "Racer: firstName can't be null")
+    @NotBlank(message = "Racer: firstName need to have minimum 1 non-white space character")
     private String firstName;
+    @NotNull(message = "Racer: lastName can't be null")
+    @NotBlank(message = "Racer: lastName need to have minimum 1 non-white space character")
     private String lastName;
+    @NotNull(message = "Racer: age can't be null")
+    @Min(value = 0, message = "Racer: age can't be negative")
     private Integer age;
+    private Integer id;
 
     public Racer(String firstName, String lastName, Integer age) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        return "Racer{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", age=" + age +
-                '}';
     }
 }

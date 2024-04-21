@@ -10,6 +10,7 @@ import com.fmi.web.lab.raceeventmanagement.util.StringValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -29,7 +30,7 @@ public class TeamService implements TeamServiceAPI {
     public void createTeam(String name) {
         validateTeamAttributes(name);
 
-        teamRepository.addTeam(new Team(name));
+        teamRepository.addTeam(new Team(name, Collections.emptyList()));
         logger.info(String.format("Team '%s' was created", name));
     }
 

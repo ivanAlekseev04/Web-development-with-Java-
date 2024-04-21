@@ -13,10 +13,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Component
-public class TrackRepository implements TrackRepositoryAPI {
+public class TrackRepository {
     private Map<Integer, Track> trackMapTable = new HashMap<>();
 
-    @Override
+    /**
+     * Add track to your DB. If the track is already present throw Custom Exception
+     * @param track
+     */
     public void addTrack(Track track) {
         if (track.getId() != null) {
             throw new AlreadyExistedException(String.format("Track with id %s is already in DB", track.getId()));
@@ -26,7 +29,10 @@ public class TrackRepository implements TrackRepositoryAPI {
         trackMapTable.put(track.getId(), track);
     }
 
-    @Override
+    /**
+     * Modify track from your DB
+     * @param track
+     */
     public void updateTrack(Track track) {
         if (!trackMapTable.containsKey(track.getId())) {
             throw new NoSuchElementException(String.format("Track with id %s is not" +
@@ -36,7 +42,11 @@ public class TrackRepository implements TrackRepositoryAPI {
         trackMapTable.replace(track.getId(), track);
     }
 
-    @Override
+    /**
+     * Delete track by name. If there is no element to be deleted then return false;
+     * @param name
+     * @return if there is element to delete -> true, if not -> false
+     */
     public boolean deleteTrackByName(String name) {
         Optional<Integer> toDelete = trackMapTable.entrySet()
                 .stream()
@@ -48,12 +58,19 @@ public class TrackRepository implements TrackRepositoryAPI {
         return toDelete.isPresent();
     }
 
-    @Override
+    /**
+     * Get track by passed id. If there is no element return Optional empty.
+     * @param id
+     * @return Optional of Track
+     */
     public Optional<Track> getTrackById(Integer id) {
         return Optional.ofNullable(trackMapTable.get(id));
     }
 
-    @Override
+    /**
+     * Get all tracks
+     * @return List of Tracks
+     */
     public List<Track> getAllTracks() {
         return trackMapTable.values().stream().toList();
     }

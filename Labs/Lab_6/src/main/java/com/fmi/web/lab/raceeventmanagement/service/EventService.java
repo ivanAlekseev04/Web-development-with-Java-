@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -54,26 +55,25 @@ public class EventService implements EventServiceAPI {
     }
 
     @Override
-    public void createEvent(String name, Track track, List<Team> teams,LocalDateTime dateOfEvent) {
+    public Event createEvent(String name, Track track, List<Team> teams, LocalDateTime dateOfEvent) {
         validateEventAttributes(name, track, dateOfEvent);
 
-        eventRepository.addEvent(new Event(name, track, teams, dateOfEvent));
         logger.info(String.format("Event '%s' was created", name));
+        return eventRepository.addEvent(new Event(name, track, teams, dateOfEvent));
     }
 
     @Override
-    public void updateEvent(Event event) {
-        validateEventAttributes(event.getName(), event.getTrack(), event.getDateOfEvent());
-
-        eventRepository.updateEvent(event);
+    public Event updateEvent(Event event) {
+        return eventRepository.updateEvent(event);
     }
 
-    public void addTeamToEvent(Integer eventId, Team team) {
+    public List<Team> addTeamToEvent(Integer eventId, Team team) {
         if (eventId == null || eventId < 0) {
             throw new IllegalArgumentException("Invalid eventId. Id can't be negative or null");
-        } else if (team == null) {
-            throw new IllegalArgumentException("Team can't be null");
         }
+        //else if (team == null) {
+        //    throw new IllegalArgumentException("Team can't be null");
+        //}
 
 
         if (eventRepository.getEventById(eventId).isEmpty()) {
@@ -94,9 +94,23 @@ public class EventService implements EventServiceAPI {
         */
 
         eventRepository.getEventById(eventId).get().getTeams().add(team);
+        // TODO: somehow produces "UnsupportedOperationException" and 500 code
+        /*
+        //TODO: Why am i getting unmodifiable list ?
+        var ev = eventRepository.getEventById(eventId);
+        var newList = new LinkedList<Team>(ev.get().getTeams());
+        newList.add(team);
+        ev.get().setTeams(newList);
+
+         */
+        return eventRepository.getAllEvents()
+                .stream()
+                .map(e -> e.getTeams())
+                .flatMap(t -> t.stream())
+                .toList();
     }
 
-    public void deleteTeamFromEventByName(Integer eventId, String name) {
+    public boolean deleteTeamFromEventByName(Integer eventId, String name) {
         StringValidator.validate(name, "name");
 
         if (eventId == null || eventId < 0) {
@@ -112,6 +126,10 @@ public class EventService implements EventServiceAPI {
         }
         */
 
+        return eventRepository.getEventById(eventId).get()
+                .getTeams()
+                .removeIf(t -> Objects.equals(t.getName(), name));
+        /*
         if (!eventRepository.getEventById(eventId).get()
                 .getTeams()
                 .removeIf(t -> Objects.equals(t.getName(), name))) {
@@ -119,6 +137,7 @@ public class EventService implements EventServiceAPI {
             throw new NoSuchElementException(String.format("Team with specified name %s doesn't exist in event %s",
                     name, eventId));
         }
+        */
     }
 
     @Override
@@ -154,11 +173,9 @@ public class EventService implements EventServiceAPI {
 
     @Override
     public List<Racer> getAllRacersForNearestEvent() {
-        // "nearest Event" can be treated as Event from the past or future Event
-        // ascending order of sorting is default for Comparator.comparing()
         return eventRepository.getAllEvents()
                 .stream()
-                .sorted(Comparator.comparingLong(f -> ChronoUnit.DAYS.between(LocalDateTime.now(), f.getDateOfEvent())))
+                .sorted(Comparator.comparingLong(f -> ChronoUnit.SECONDS.between(LocalDateTime.now(), f.getDateOfEvent())))
                 .findFirst()
                 .map(e -> e.getTeams()
                         .stream()

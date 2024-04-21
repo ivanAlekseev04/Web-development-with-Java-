@@ -11,10 +11,13 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Component
-public class RacerRepository implements RacerRepositoryAPI {
+public class RacerRepository {
     private Map<Integer, Racer> racerTable = new HashMap<>();
 
-    @Override
+    /**
+     * Add racer to your DB
+     * @param racer
+     */
     public void addRacer(Racer racer) {
         // As soon Racer instances are created inside another class with automatic "id" assignment,
         // then it can't be 2 identical racers at all
@@ -22,7 +25,10 @@ public class RacerRepository implements RacerRepositoryAPI {
         racerTable.put(racer.getId(), racer);
     }
 
-    @Override
+    /**
+     * Modify racer from your DB
+     * @param racer
+     */
     public void updateRacer(Racer racer) {
         if (!racerTable.containsKey(racer.getId())) {
             throw new NoSuchElementException(String.format("Racer with id %s is not" +
@@ -32,12 +38,20 @@ public class RacerRepository implements RacerRepositoryAPI {
         racerTable.replace(racer.getId(), racer);
     }
 
-    @Override
+    /**
+     * Delete racer by id. If there is no element to be deleted then return false;
+     * @param id
+     * @return if there is element to delete -> true, if not -> false
+     */
     public boolean deleteRacerById(Integer id) {
         return (racerTable.remove(id) != null);
     }
 
-    @Override
+    /**
+     * Get racer by passed id. If there is no element return Optional empty
+     * @param id
+     * @return Optional of Racer
+     */
     public Optional<Racer> getRacerById(Integer id) {
         return Optional.ofNullable(racerTable.get(id));
     }

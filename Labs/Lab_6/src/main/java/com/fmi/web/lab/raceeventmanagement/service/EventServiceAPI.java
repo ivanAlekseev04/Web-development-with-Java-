@@ -14,9 +14,9 @@ public interface EventServiceAPI {
 
     List<Racer> getAllRacersByTrackName(String trackName);
 
-    void createEvent(String name, Track track, List<Team> teams, LocalDateTime dateOfEvent);
+    Event createEvent(String name, Track track, List<Team> teams, LocalDateTime dateOfEvent);
 
-    void updateEvent(Event event);
+    Event updateEvent(Event event);
 
     boolean deleteEventById(Integer id);
 

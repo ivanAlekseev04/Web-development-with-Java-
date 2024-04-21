@@ -1,6 +1,8 @@
 package com.fmi.web.lab.raceeventmanagement.logger;
 
 import com.fmi.web.lab.raceeventmanagement.vo.LoggerLevel;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
@@ -16,33 +18,39 @@ import java.time.LocalDateTime;
 @Profile("dev")
 public class FileLogger implements ILogger {
     @Value("${config.log.level.active}")
-    private String logLevel;
+    private String definedLogLevel;
+    private LoggerLevel logLevel;
+
+    @PostConstruct
+    private void initLogLevel() {
+        logLevel = LoggerLevel.valueOf(definedLogLevel);
+    }
 
     @Override
     public void info(Object toLog) {
-        if(LoggerLevel.valueOf(logLevel).getCode() >= LoggerLevel.INFO.getCode()) {
-            logInformation(toLog, LoggerLevel.valueOf(logLevel));
+        if(logLevel.getCode() >= LoggerLevel.INFO.getCode()) {
+            logInformation(toLog, logLevel);
         }
     }
 
     @Override
     public void debug(Object toLog) {
-        if(LoggerLevel.valueOf(logLevel).getCode() >= LoggerLevel.DEBUG.getCode()) {
-            logInformation(toLog, LoggerLevel.valueOf(logLevel));
+        if(logLevel.getCode() >= LoggerLevel.DEBUG.getCode()) {
+            logInformation(toLog, logLevel);
         }
     }
 
     @Override
     public void trace(Object toLog) {
-        if(LoggerLevel.valueOf(logLevel).getCode().equals(LoggerLevel.TRACE.getCode())) {
-            logInformation(toLog, LoggerLevel.valueOf(logLevel));
+        if(logLevel.getCode().equals(LoggerLevel.TRACE.getCode())) {
+            logInformation(toLog, logLevel);
         }
     }
 
     @Override
     public void error(Object toLog) {
-        if(LoggerLevel.valueOf(logLevel).getCode() >= LoggerLevel.ERROR.getCode()) {
-            logInformation(toLog, LoggerLevel.valueOf(logLevel));
+        if(logLevel.getCode() >= LoggerLevel.ERROR.getCode()) {
+            logInformation(toLog, logLevel);
         }
     }
 
