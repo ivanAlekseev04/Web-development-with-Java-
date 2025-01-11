@@ -28,12 +28,12 @@ public class Track {
     private Integer id;
 
     @Column(unique = true)
-    @NotNull(message = "Track: name can't be null")
-    @NotBlank(message = "Track: name need to have minimum 1 non-white space character")
+    @NotNull(message = "Can't be null")
+    @NotBlank(message = "Need to have minimum 1 non-white space character")
     private String name;
 
-    @NotNull(message = "Track: length can't be null")
-    @Min(value = 0, message = "Track: length can't be negative")
+    @NotNull(message = "Can't be null")
+    @Min(value = 0, message = "Can't be negative")
     private Integer length;
 
     public Track(String name, Integer length) {

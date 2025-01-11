@@ -17,18 +17,18 @@ public class EventDTO {
 
     private Integer id;
 
-    @NotNull(message = "EventDTO: name can't be null")
-    @NotBlank(message = "EventDTO: name need to have minimum 1 non-white space character")
+    @NotNull(message = "Can't be null")
+    @NotBlank(message = "Need to have minimum 1 non-white space character")
     private String name;
 
-    @NotNull(message = "EventDTO: track can't be null")
+    @NotNull(message = "Can't be null")
     @Valid
     private TrackDTO track;
 
-    @NotNull(message = "EventDTO: teams can't be null")
+    @NotNull(message = "Can't be null")
     @Valid
     private List<TeamDTO> teams;
 
-    @NotNull(message = "EventDTO: dateOfEvent can't be null")
+    @NotNull(message = "Can't be null")
     private LocalDateTime dateOfEvent;
 }

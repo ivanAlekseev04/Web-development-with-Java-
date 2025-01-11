@@ -14,11 +14,11 @@ public class TrackDTO {
 
     private Integer id;
 
-    @NotNull(message = "TrackDTO: name can't be null")
-    @NotBlank(message = "TrackDTO: name need to have minimum 1 non-white space character")
+    @NotNull(message = "Can't be null")
+    @NotBlank(message = "Need to have minimum 1 non-white space character")
     private String name;
 
-    @NotNull(message = "TrackDTO: length can't be null")
-    @Min(value = 0, message = "TrackDTO: length can't be negative")
+    @NotNull(message = "Can't be null")
+    @Min(value = 0, message = "Can't be negative")
     private Integer length;
 }

@@ -1,0 +1,154 @@
+<div class="main">
+  <div class="body">
+    <div class="form-container">
+      <div class="form-group">
+        <p>Operation with teams:</p>
+        <label for="create">
+          <input type="radio" id="create" name="option" value="create" [(ngModel)]="operation" checked>create
+        </label><br>
+        <label for="delete">
+          <input type="radio" id="delete" name="option" value="delete" [(ngModel)]="operation">delete
+        </label><br>
+        <label for="update">
+          <input type="radio" id="update" name="option" value="update" [(ngModel)]="operation">update
+        </label><br>
+        <label for="add racer">
+          <input type="radio" id="add racer" name="option" value="add racer" [(ngModel)]="operation">add racer
+        </label><br>
+        <label for="delete racer">
+          <input type="radio" id="delete racer" name="option" value="delete racer" [(ngModel)]="operation">delete racer
+        </label><br>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="operation === 'create'" class="body centered-column">
+    <div class="form-container">
+      <div class="form-header">
+        <h1>Create team</h1>
+      </div>
+      <form id="createForm" (ngSubmit)="createForm()">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" [(ngModel)]="team.name" required>
+        </div>
+        <div class="form-group">
+          <button type="submit">Create</button>
+        </div>
+        <div *ngIf="errorMessage" class="error" [innerHTML]="errorMessage"></div>
+        <div *ngIf="successMessage" class="success" [innerHTML]="successMessage"></div>
+      </form>
+    </div>
+  </div>
+  <div *ngIf="operation === 'delete'" class="body centered-column">
+    <div class="form-container">
+      <div class="form-header">
+        <h1>Delete team</h1>
+      </div>
+      <form id="deleteForm" (ngSubmit)="deleteForm()">
+        <div class="form-group">
+          <label for="nameToDelete">Name</label>
+          <input type="text" id="nameToDelete" name="nameToDelete" [(ngModel)]="nameToDelete" required>
+        </div>
+        <div class="form-group">
+          <button type="submit">Delete</button>
+        </div>
+        <div *ngIf="successMessage" class="success" [innerHTML]="successMessage"></div>
+        <div *ngIf="errorMessage" class="error" [innerHTML]="errorMessage"></div>
+      </form>
+    </div>
+  </div>
+  <div *ngIf="operation === 'update'" class="body centered-column">
+    <div class="form-container">
+      <div class="form-header">
+        <h1>Update team</h1>
+      </div>
+      <form id="updateForm" (ngSubmit)="updateForm()">
+        <div class="form-group">
+          <label for="nameToUpdate">Name of the existed team</label>
+          <input type="text" id="nameToUpdate" name="nameToUpdate" [(ngModel)]="nameToUpdate" required>
+        </div>
+        <div class="form-group">
+          <label for="newRacersInTeamIds">Racer IDs to be in the team separated by comma</label>
+          <input type="text" id="newRacersInTeamIds" name="newRacersInTeamIds" [(ngModel)]="racerIdsNotParsed">
+        </div>
+        <div class="form-group">
+          <button type="submit">Update</button>
+        </div>
+        <div *ngIf="errorMessage" class="error" [innerHTML]="errorMessage"></div>
+        <div *ngIf="successMessage" class="success" [innerHTML]="successMessage"></div>
+      </form>
+    </div>
+  </div>
+  <div *ngIf="operation === 'add racer'" class="body centered-column">
+    <div class="form-container">
+      <div class="form-header">
+        <h1>Add racer to team</h1>
+      </div>
+      <form id="addRacerForm" (ngSubmit)="addRacerForm()">
+        <div class="form-group">
+          <label for="teamNameToBeAddedRacer">Team name</label>
+          <input type="text" id="teamNameToBeAddedRacer" name="teamNameToBeAddedRacer" [(ngModel)]="teamNameToBeAddedRacer" required>
+        </div>
+        <div class="form-group">
+          <label for="idToAdd">Racer Id</label>
+          <input type="number" id="idToAdd" min="0" name="idToAdd" [(ngModel)]="racerIdToBeAdded" required>
+        </div>
+        <div class="form-group">
+          <button type="submit">Add racer to team</button>
+        </div>
+        <div *ngIf="errorMessage" class="error" [innerHTML]="errorMessage"></div>
+        <div *ngIf="successMessage" class="success" [innerHTML]="successMessage"></div>
+      </form>
+    </div>
+  </div>
+  <div *ngIf="operation === 'delete racer'" class="body centered-column">
+    <div class="form-container">
+      <div class="form-header">
+        <h1>Delete racer from team</h1>
+      </div>
+      <form id="deleteRacerForm" (ngSubmit)="deleteRacerForm()">
+        <div class="form-group">
+          <label for="teamNameToBeDeletedRacer">Team name</label>
+          <input type="text" id="teamNameToBeDeletedRacer" name="teamNameToBeDeletedRacer" [(ngModel)]="teamNameToBeDeletedRacer" required>
+        </div>
+        <div class="form-group">
+          <label for="idToDelete">Racer Id</label>
+          <input type="number" id="idToDelete" min="0" name="idToDelete" [(ngModel)]="racerIdToBeDeleted" required>
+        </div>
+        <div class="form-group">
+          <button type="submit">Delete racer from team</button>
+        </div>
+        <div *ngIf="errorMessage" class="error" [innerHTML]="errorMessage"></div>
+        <div *ngIf="successMessage" class="success" [innerHTML]="successMessage"></div>
+      </form>
+    </div>
+  </div>
+  <div class="last-column body">
+    <div class="form-container">
+      <form id="infoForm" (ngSubmit)="infoForm()">
+
+        <div class="form-group">
+          <input type="checkbox" id="filterByName" name="filterByName" [(ngModel)]="filterByName">
+          <label for="filterByName">Filter teams by name</label>
+        </div>
+        <div *ngIf="filterByName" class="form-group">
+          <input type="text" id="nameFilter" name="nameFilter" [(ngModel)]="nameFilter">
+        </div>
+
+        <div class="form-group">
+          <button type="submit">List teams</button>
+        </div>
+      </form>
+    </div>
+    <div *ngIf="teams.length > 0" class="team-list">
+      <h2>Teams</h2>
+      <div *ngFor="let team of teams">
+        <p><strong>Team name:</strong> [ {{ team.name }} ]<span *ngIf="team.racers.length > 0">, <strong>racers:</strong></span></p>
+        <div *ngFor="let racer of team.racers">
+          <p class="racer-from-team">=&gt; <strong>Racer ID:</strong> [ {{ racer.id }} ], <strong>first Name:</strong> {{ racer.firstName }}, <strong>last Name:</strong> {{ racer.lastName }}, <strong>age:</strong> {{ racer.age }}</p>
+        </div>
+        <p></p>
+      </div>
+    </div>
+  </div>
+</div>

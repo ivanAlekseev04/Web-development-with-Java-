@@ -1,0 +1,120 @@
+<div class="main">
+  <div class="body">
+    <div class="form-container">
+      <div class="form-group">
+        <p>Operation with racers:</p>
+        <label for="create">
+          <input type="radio" id="create" name="option" value="create" [(ngModel)]="operation" checked>create
+        </label><br>
+        <label for="delete">
+          <input type="radio" id="delete" name="option" value="delete" [(ngModel)]="operation">delete
+        </label><br>
+        <label for="update">
+          <input type="radio" id="update" name="option" value="update" [(ngModel)]="operation">update
+        </label><br>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="operation === 'create'" class="body centered-column">
+    <div class="form-container">
+      <div class="form-header">
+        <h1>Create racer</h1>
+      </div>
+      <form id="createForm" (ngSubmit)="createForm()">
+        <div class="form-group">
+          <label for="firstName">First name</label>
+          <input type="text" id="firstName" name="firstName" [(ngModel)]="racer.firstName" required>
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last name</label>
+          <input type="text" id="lastName" name="lastName" [(ngModel)]="racer.lastName" required>
+        </div>
+        <div class="form-group">
+          <label for="age">Age</label>
+          <input type="number" id="age" name="age" min="1" max="50" [(ngModel)]="racer.age" required>
+        </div>
+        <div class="form-group">
+          <button type="submit">Create</button>
+        </div>
+        <div *ngIf="errorMessage" class="error" [innerHTML]="errorMessage"></div>
+        <div *ngIf="successMessage" class="success" [innerHTML]="successMessage"></div>
+      </form>
+    </div>
+  </div>
+  <div *ngIf="operation === 'delete'" class="body centered-column">
+    <div class="form-container">
+      <div class="form-header">
+        <h1>Delete racer</h1>
+      </div>
+      <form id="deleteForm" (ngSubmit)="deleteForm()">
+        <div class="form-group">
+          <label for="idToDelete">Id</label>
+          <input type="number" id="idToDelete" min="0" name="idToDelete" [(ngModel)]="idToDelete" required>
+        </div>
+        <div class="form-group">
+          <button type="submit">Delete</button>
+        </div>
+        <div *ngIf="successMessage" class="success" [innerHTML]="successMessage"></div>
+        <div *ngIf="errorMessage" class="error" [innerHTML]="errorMessage"></div>
+      </form>
+    </div>
+  </div>
+  <div *ngIf="operation === 'update'" class="body centered-column">
+    <div class="form-container">
+      <div class="form-header">
+        <h1>Update racer</h1>
+      </div>
+      <form id="updateForm" (ngSubmit)="updateForm()">
+        <div class="form-group">
+          <label for="idToUpdate">Id of the existed racer</label>
+          <input type="number" id="idToUpdate" min="0" name="idToUpdate" [(ngModel)]="idToUpdate" required>
+        </div>
+        <div class="form-group">
+          <label for="newFirstName">First name</label>
+          <input type="text" id="newFirstName" name="newFirstName" [(ngModel)]="forUpdate.firstName">
+        </div>
+        <div class="form-group">
+          <label for="newLastName">Last name</label>
+          <input type="text" id="newLastName" name="newLastName" [(ngModel)]="forUpdate.lastName">
+        </div>
+        <div class="form-group">
+          <label for="newAge">Age</label>
+          <input type="number" id="newAge" name="newAge" min="1" max="50" [(ngModel)]="forUpdate.age">
+        </div>
+        <div class="form-group">
+          <label for="newTeamName">New team name</label>
+          <input type="text" id="newTeamName" name="newTeamName" [(ngModel)]="forUpdate.team.name">
+        </div>
+        <div class="form-group">
+          <button type="submit">Update</button>
+        </div>
+        <div *ngIf="errorMessage" class="error" [innerHTML]="errorMessage"></div>
+        <div *ngIf="successMessage" class="success" [innerHTML]="successMessage"></div>
+      </form>
+    </div>
+  </div>
+  <div class="last-column body">
+    <div class="form-container">
+      <form id="infoForm" (ngSubmit)="infoForm()">
+
+        <div class="form-group">
+          <input type="checkbox" id="filterByFirstName" name="filterByFirstName" [(ngModel)]="filterByFirstName">
+          <label for="filterByFirstName">Filter racers by first name</label>
+        </div>
+        <div *ngIf="filterByFirstName" class="form-group">
+          <input type="text" id="firstNameFilter" name="firstNameFilter" [(ngModel)]="firstNameFilter">
+        </div>
+
+        <div class="form-group">
+          <button type="submit">List racers</button>
+        </div>
+      </form>
+    </div>
+      <div *ngIf="racers.length > 0" class="racers-list">
+        <h2>Racers</h2>
+        <div *ngFor="let racer of racers">
+          <p><strong>Racer ID:</strong> [ {{ racer.id }} ], <strong>first Name:</strong> {{ racer.firstName }}, <strong>last Name:</strong> {{ racer.lastName }}, <strong>age:</strong> {{ racer.age }}</p>
+        </div>
+      </div>
+  </div>
+</div>

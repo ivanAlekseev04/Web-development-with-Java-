@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -22,7 +24,13 @@ public class GlobalExceptionHandler {
     public final ResponseEntity handleInternalServerErrors(IllegalArgumentException e) {
         log.error(e.getMessage());
 
-        return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler({ValidationException.class})
+    public final ResponseEntity handleValidationException(ValidationException e) {
+        log.error(Map.of(e.getErrorKey(), e.getMessage()).toString());
+
+        return new ResponseEntity(new HashMap<>(Map.of(e.getErrorKey(), e.getMessage())), HttpStatus.BAD_REQUEST);
     }
 
     // catch DB exceptions
@@ -30,13 +38,13 @@ public class GlobalExceptionHandler {
     public final ResponseEntity handleNotFoundDBException(EntityNotFoundException e) {
         log.error(e.getMessage());
 
-        return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity(Map.of("error", e.getMessage()), HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(DataIntegrityViolationException.class)
     public final ResponseEntity handleInsertingDuplicatesToDB(DataIntegrityViolationException e) {
         log.error(e.getMessage());
 
-        return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     // catch Hibernate validation exceptions

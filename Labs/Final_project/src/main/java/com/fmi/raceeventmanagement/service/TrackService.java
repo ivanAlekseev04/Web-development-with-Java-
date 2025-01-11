@@ -1,6 +1,7 @@
 package com.fmi.raceeventmanagement.service;
 
 import com.fmi.raceeventmanagement.dto.TrackDTO;
+import com.fmi.raceeventmanagement.exceptions.ValidationException;
 import com.fmi.raceeventmanagement.mapper.TrackMapper;
 import com.fmi.raceeventmanagement.model.Track;
 import com.fmi.raceeventmanagement.repository.TrackRepository;
@@ -37,7 +38,7 @@ public class TrackService implements TrackServiceAPI {
     @Override
     public Track createTrack(String name, Integer length) {
         if (trackRepository.findByName(name).isPresent()) {
-            throw new DataIntegrityViolationException(String.format("Track with name %s is already existed !", name));
+            throw new ValidationException(String.format("Track with name %s is already existed !", name));
         }
 
         log.info(String.format("Track '%s' was created", name));
@@ -50,24 +51,26 @@ public class TrackService implements TrackServiceAPI {
         var toUpdate = trackRepository.findById(track.getId());
 
         if (toUpdate.isEmpty()) {
-            throw new EntityNotFoundException(String.format("Track with id %s is not" +
+            throw new ValidationException(String.format("Track with id %s is not" +
                     " already in DB to be updated", track.getId()));
         }
 
         if (track.getName() != null) {
             if(track.getName().isBlank() || track.getName().isEmpty()) {
-                throw new IllegalArgumentException("Track: name need to have minimum 1 non-white space character");
+                throw new ValidationException("Need to have minimum 1 non-white space character", "name");
             }
 
             toUpdate.get().setName(track.getName());
         }
         if(track.getLength() != null) {
             if(track.getLength() <= 0) {
-                throw new IllegalArgumentException("Track: length need to be bigger than zero");
+                throw new ValidationException("Need to be bigger than zero", "length");
             }
 
             toUpdate.get().setLength(track.getLength());
         }
+
+        trackRepository.save(toUpdate.get());
     }
 
     @Override

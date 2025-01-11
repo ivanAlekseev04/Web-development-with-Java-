@@ -15,12 +15,12 @@ import java.util.List;
 @ToString
 public class TeamDTO {
 
-    @NotNull(message = "TeamDTO: name can't be null")
-    @NotBlank(message = "TeamDTO: name need to have minimum 1 non-white space character")
-    @Size(max = 60, message = "TeamDTO: Team's name need to be maximum of 60 characters length")
+    @NotNull(message = "Can't be null")
+    @NotBlank(message = "Need to have minimum 1 non-white space character")
+    @Size(max = 60, message = "Need to be maximum of 60 characters length")
     private String name;
 
-    @NotNull(message = "TeamDTO: racers can't be null")
+    @NotNull(message = "Can't be null")
     @Valid
     private List<RacerDTO> racers;
 }

@@ -1,9 +1,6 @@
 package com.fmi.raceeventmanagement.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -23,15 +20,15 @@ import java.util.Set;
 public class Team {
 
     @Id
-    @NotNull(message = "Team: name can't be null")
-    @NotBlank(message = "Team: name need to have minimum 1 non-white space character")
-    @Size(max = 60, message = "Team: Team's name need to be maximum of 60 characters length")
+    @NotNull(message = "Can't be null")
+    @NotBlank(message = "Need to have minimum 1 non-white space character")
+    @Size(max = 60, message = "Need to be maximum of 60 characters length")
     private String name;
 
     @OneToMany(mappedBy = "team")
     private Set<Racer> racers;
 
-    @ManyToMany(mappedBy = "teams")
+    @ManyToMany(mappedBy = "teams", cascade = {CascadeType.REMOVE})
     private Set<Event> events;
 
     public Team(String name) {

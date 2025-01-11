@@ -19,7 +19,7 @@ public interface TeamServiceAPI {
 
     Set<TeamDTO> getAllTeams();
 
-    void addRacerToTeam(String teamName, Racer racer);
+    void addRacerToTeam(String teamName, Integer id);
 
     void deleteRacerFromTeamById(String teamName, Integer id);
 }

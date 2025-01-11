@@ -1,6 +1,7 @@
 package com.fmi.raceeventmanagement.service;
 
 import com.fmi.raceeventmanagement.dto.RacerDTO;
+import com.fmi.raceeventmanagement.exceptions.ValidationException;
 import com.fmi.raceeventmanagement.mapper.RacerMapper;
 import com.fmi.raceeventmanagement.model.Racer;
 import com.fmi.raceeventmanagement.model.Team;
@@ -49,27 +50,27 @@ public class RacerService implements RacerServiceAPI {
         var toUpdate = racerRepository.findById(racer.getId());
 
         if (toUpdate.isEmpty()) {
-            throw new EntityNotFoundException(String.format("Racer with id %s is not" +
+            throw new ValidationException(String.format("Racer with id %s is not" +
                     " already in DB to be updated", racer.getId()));
         }
 
         if (racer.getFirstName() != null) {
             if(racer.getFirstName().isEmpty() || racer.getFirstName().isBlank()) {
-                throw new IllegalArgumentException("Racer: firstName need to have minimum 1 non-white space character");
+                throw new ValidationException("Need to have minimum 1 non-white space character", "firstName");
             }
 
             toUpdate.get().setFirstName(racer.getFirstName());
         }
         if(racer.getLastName() != null) {
             if(racer.getLastName().isEmpty() || racer.getLastName().isBlank()) {
-                throw new IllegalArgumentException("Racer: lastName need to have minimum 1 non-white space character");
+                throw new ValidationException("Need to have minimum 1 non-white space character", "lastName");
             }
 
             toUpdate.get().setLastName(racer.getLastName());
         }
         if(racer.getAge() != null) {
             if(racer.getAge() < 0) {
-                throw new IllegalArgumentException("Racer: age can't be negative");
+                throw new ValidationException("Can't be negative", "age");
             }
 
             toUpdate.get().setAge(racer.getAge());
@@ -77,6 +78,8 @@ public class RacerService implements RacerServiceAPI {
         if(racer.getTeam() != null) {
             assignRacerToTeam(toUpdate.get(), racer.getTeam());
         }
+
+        racerRepository.save(toUpdate.get());
     }
 
     @Override

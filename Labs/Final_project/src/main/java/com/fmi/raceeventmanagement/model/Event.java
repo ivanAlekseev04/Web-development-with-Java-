@@ -22,8 +22,8 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @NotNull(message = "Event: name can't be null")
-    @NotBlank(message = "Event: name need to have minimum 1 non-white space character")
+    @NotNull(message = "Can't be null")
+    @NotBlank(message = "Need to have minimum 1 non-white space character")
     private String name;
 
     @OneToOne

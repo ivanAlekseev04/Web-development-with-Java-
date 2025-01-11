@@ -16,7 +16,6 @@ public class RacerController {
     
     private final RacerService racerService;
 
-    // TODO: fix circular dependency printing
     @GetMapping
     public ResponseEntity getAllRacersByCriteria(@RequestParam(value = "firstName", required = false) String firstName) {
         if(firstName == null) {
@@ -44,6 +43,8 @@ public class RacerController {
     public ResponseEntity deleteRacer(@PathVariable("id") Integer id) {
         racerService.deleteRacerById(id);
 
-        return ResponseEntity.noContent().build();
+        System.out.println("Racer with id " + id + " need to be deleted!");
+
+        return ResponseEntity.ok().build();
     }
 }

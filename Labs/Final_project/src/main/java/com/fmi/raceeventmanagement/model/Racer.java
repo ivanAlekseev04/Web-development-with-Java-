@@ -27,16 +27,16 @@ public class Racer {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @NotNull(message = "Racer: firstName can't be null")
-    @NotBlank(message = "Racer: firstName need to have minimum 1 non-white space character")
+    @NotNull(message = "Can't be null")
+    @NotBlank(message = "Need to have minimum 1 non-white space character")
     private String firstName;
 
-    @NotNull(message = "Racer: lastName can't be null")
-    @NotBlank(message = "Racer: lastName need to have minimum 1 non-white space character")
+    @NotNull(message = "Can't be null")
+    @NotBlank(message = "Need to have minimum 1 non-white space character")
     private String lastName;
 
-    @NotNull(message = "Racer: age can't be null")
-    @Min(value = 0, message = "Racer: age can't be negative")
+    @NotNull(message = "Can't be null")
+    @Min(value = 0, message = "Can't be negative")
     private Integer age;
 
     @ManyToOne(fetch = FetchType.LAZY)

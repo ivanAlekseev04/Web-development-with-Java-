@@ -1,0 +1,108 @@
+<div class="main">
+  <div class="body">
+    <div class="form-container">
+      <div class="form-group">
+        <p>Operation with tracks:</p>
+        <label for="create">
+          <input type="radio" id="create" name="option" value="create" [(ngModel)]="operation" checked>create
+        </label><br>
+        <label for="delete">
+          <input type="radio" id="delete" name="option" value="delete" [(ngModel)]="operation">delete
+        </label><br>
+        <label for="update">
+          <input type="radio" id="update" name="option" value="update" [(ngModel)]="operation">update
+        </label><br>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="operation === 'create'" class="body centered-column">
+    <div class="form-container">
+      <div class="form-header">
+        <h1>Create track</h1>
+      </div>
+      <form id="createForm" (ngSubmit)="createForm()">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" [(ngModel)]="track.name" required>
+        </div>
+        <div class="form-group">
+          <label for="length">Length</label>
+          <input type="number" id="length" name="length" min="1" [(ngModel)]="track.length" required>
+        </div>
+        <div class="form-group">
+          <button type="submit">Create</button>
+        </div>
+        <div *ngIf="errorMessage" class="error" [innerHTML]="errorMessage"></div>
+        <div *ngIf="successMessage" class="success" [innerHTML]="successMessage"></div>
+      </form>
+    </div>
+  </div>
+  <div *ngIf="operation === 'delete'" class="body centered-column">
+    <div class="form-container">
+      <div class="form-header">
+        <h1>Delete track</h1>
+      </div>
+      <form id="deleteForm" (ngSubmit)="deleteForm()">
+        <div class="form-group">
+          <label for="nameToDelete">Name</label>
+          <input type="text" id="nameToDelete" name="nameToDelete" [(ngModel)]="nameToDelete" required>
+        </div>
+        <div class="form-group">
+          <button type="submit">Delete</button>
+        </div>
+        <div *ngIf="successMessage" class="success" [innerHTML]="successMessage"></div>
+        <div *ngIf="errorMessage" class="error" [innerHTML]="errorMessage"></div>
+      </form>
+    </div>
+  </div>
+  <div *ngIf="operation === 'update'" class="body centered-column">
+    <div class="form-container">
+      <div class="form-header">
+        <h1>Update track</h1>
+      </div>
+      <form id="updateForm" (ngSubmit)="updateForm()">
+        <div class="form-group">
+          <label for="idToUpdate">Id of the existed track</label>
+          <input type="number" id="idToUpdate" min="0" name="idToUpdate" [(ngModel)]="idToUpdate" required>
+        </div>
+        <div class="form-group">
+          <label for="newName">Name</label>
+          <input type="text" id="newName" name="newName" [(ngModel)]="forUpdate.name">
+        </div>
+        <div class="form-group">
+          <label for="newLength">Length</label>
+          <input type="number" id="newLength" name="newLength" min="1" [(ngModel)]="forUpdate.length">
+        </div>
+        <div class="form-group">
+          <button type="submit">Update</button>
+        </div>
+        <div *ngIf="errorMessage" class="error" [innerHTML]="errorMessage"></div>
+        <div *ngIf="successMessage" class="success" [innerHTML]="successMessage"></div>
+      </form>
+    </div>
+  </div>
+  <div class="last-column body">
+    <div class="form-container">
+      <form id="infoForm" (ngSubmit)="infoForm()">
+
+        <div class="form-group">
+          <input type="checkbox" id="filterByName" name="filterByName" [(ngModel)]="filterByName">
+          <label for="filterByName">Filter tracks by name</label>
+        </div>
+        <div *ngIf="filterByName" class="form-group">
+          <input type="text" id="nameFilter" name="nameFilter" [(ngModel)]="nameFilter">
+        </div>
+
+        <div class="form-group">
+          <button type="submit">List tracks</button>
+        </div>
+      </form>
+    </div>
+    <div *ngIf="tracks.length > 0" class="track-list">
+      <h2>Tracks</h2>
+      <div *ngFor="let track of tracks">
+        <p><strong>Track ID: [</strong> {{ track.id }} <strong>], name:</strong> {{ track.name }}, <strong>length:</strong> {{ track.length }}</p>
+      </div>
+    </div>
+  </div>
+</div>

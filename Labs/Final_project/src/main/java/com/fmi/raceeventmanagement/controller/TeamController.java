@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/team")
 @RequiredArgsConstructor
@@ -16,17 +19,15 @@ public class TeamController {
 
     private final TeamService teamService;
 
-    @GetMapping("/{name}")
-    public ResponseEntity getTeamByName(@PathVariable("name") String name) {
-        var toReturn = teamService.getTeamByName(name);
-
-        return toReturn.map(team -> new ResponseEntity(toReturn.get(), HttpStatus.OK))
-                    .orElseGet(() -> ResponseEntity.noContent().build());
-    }
-
     @GetMapping
-    public ResponseEntity getAllTeams() {
-        return new ResponseEntity(teamService.getAllTeams(), HttpStatus.OK);
+    public ResponseEntity getTeamByName(@RequestParam(value = "name", required = false) String name) {
+        if (name == null) {
+            return new ResponseEntity(teamService.getAllTeams(), HttpStatus.OK);
+        }
+
+        var toReturn = teamService.getTeamByName(name);
+        return toReturn.map(team -> new ResponseEntity(List.of(toReturn.get()), HttpStatus.OK))
+                    .orElseGet(() -> new ResponseEntity(new ArrayList(), HttpStatus.OK));
     }
 
     @PostMapping
@@ -49,16 +50,18 @@ public class TeamController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{name}/racers")
-    public ResponseEntity addRacerToTeam(@PathVariable("name") String name, @Valid @RequestBody Racer racer) {
-        teamService.addRacerToTeam(name, racer);
+    @PostMapping("/{name}/racers/{racerId}")
+    public ResponseEntity addRacerToTeam(@PathVariable("name") String name,
+                                         @PathVariable("racerId") Integer racerId) {
+        teamService.addRacerToTeam(name, racerId);
         
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{name}/racers")
-    public ResponseEntity deleteRacerFromTeamById(@PathVariable("name") String name, @RequestBody Integer id) {
-        teamService.deleteRacerFromTeamById(name, id);
+    @DeleteMapping("/{name}/racers/{racerId}")
+    public ResponseEntity deleteRacerFromTeamById(@PathVariable("name") String name,
+                                                  @PathVariable("racerId") Integer racerId) {
+        teamService.deleteRacerFromTeamById(name, racerId);
         
         return ResponseEntity.ok().build();
     }

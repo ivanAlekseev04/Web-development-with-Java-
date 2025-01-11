@@ -1,6 +1,7 @@
 package com.fmi.raceeventmanagement.service;
 
 import com.fmi.raceeventmanagement.dto.TeamDTO;
+import com.fmi.raceeventmanagement.exceptions.ValidationException;
 import com.fmi.raceeventmanagement.mapper.RacerMapper;
 import com.fmi.raceeventmanagement.mapper.TeamMapper;
 import com.fmi.raceeventmanagement.model.Racer;
@@ -31,8 +32,8 @@ public class TeamService implements TeamServiceAPI {
 
     @Override
     public Team createTeam(String name) {
-        if(teamRepository.findById(name).isPresent()) {
-            throw new DataIntegrityViolationException(String.format("Team with name %s is already existed", name));
+        if (teamRepository.findById(name).isPresent()) {
+            throw new ValidationException(String.format("Team with name %s is already existed", name));
         }
 
         log.info(String.format("Team '%s' was created", name));
@@ -45,7 +46,7 @@ public class TeamService implements TeamServiceAPI {
         var toUpdate = teamRepository.findById(team.getName());
 
         if (toUpdate.isEmpty()) {
-            throw new EntityNotFoundException(String.format("Team with name %s is not" +
+            throw new ValidationException(String.format("Team with name %s is not" +
                     " already in DB to be updated", team.getName()));
         }
 
@@ -55,6 +56,8 @@ public class TeamService implements TeamServiceAPI {
 
             toUpdate.get().setRacers(team.getRacers());
         }
+
+        teamRepository.save(toUpdate.get());
     }
 
     @Override
@@ -76,18 +79,15 @@ public class TeamService implements TeamServiceAPI {
     }
 
     @Override
-    public void addRacerToTeam(String teamName, Racer racer) {
-        if (racer == null) {
-            throw new IllegalArgumentException("Racer cannot be null");
-        }
-
+    public void addRacerToTeam(String teamName, Integer id) {
         var toUpdate = teamRepository.findById(teamName);
 
         if (toUpdate.isEmpty()) {
-            throw new EntityNotFoundException(String.format("There is no team named %s in DB", teamName));
+            throw new ValidationException(String.format("There is no team named %s in DB", teamName));
         }
 
-        assignTeamToRacers(toUpdate.get(), Set.of(racer));
+        assignTeamToRacers(toUpdate.get(), Set.of(racerRepository.findById(id).orElseThrow(
+                () -> new ValidationException(String.format("There is no racer with id %d in DB", id)))));
     }
 
     @Override
@@ -95,26 +95,27 @@ public class TeamService implements TeamServiceAPI {
         var toUpdate = teamRepository.findById(teamName);
 
         if (toUpdate.isEmpty()) {
-            throw new EntityNotFoundException(String.format("There is no team named %s in DB", teamName));
+            throw new ValidationException(String.format("There is no team named %s in DB", teamName));
         }
 
-        racerRepository.findById(id).ifPresent(racer -> assignTeamToRacers(null, Set.of(racer)));
+        assignTeamToRacers(null, Set.of(racerRepository.findById(id).orElseThrow(
+                () -> new ValidationException(String.format("There is no racer with id %d in DB", id)))));
     }
 
     private void assignTeamToRacers(Team team, Set<Racer> racers) {
         racers.forEach(r -> {
             var actualRacer = racerRepository.findById(r.getId());
 
-            if(actualRacer.isPresent()) {
-                if(actualRacer.get().getTeam() != null) {
-                    throw new DataIntegrityViolationException(String.format("Racer with id %d is already assigned to team %s"
+            if (actualRacer.isPresent()) {
+                if (actualRacer.get().getTeam() != null && team != null) {
+                    throw new ValidationException(String.format("Racer with id %d is already assigned to team %s"
                             , r.getId(), actualRacer.get().getTeam().getName()));
                 }
 
                 actualRacer.get().setTeam(team);
                 racerRepository.save(actualRacer.get());
             } else {
-                throw new EntityNotFoundException(String.format("Racer with id %d was not found in DB", r.getId()));
+                throw new ValidationException(String.format("Racer with id %d was not found in DB", r.getId()));
             }
         });
     }

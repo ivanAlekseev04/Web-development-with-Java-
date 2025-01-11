@@ -38,7 +38,7 @@ public class TrackController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{name}")
     public ResponseEntity deleteTrack(@PathVariable("name") String name) {
         trackService.deleteTrackByName(name);
 

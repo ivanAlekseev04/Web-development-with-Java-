@@ -2,6 +2,7 @@ package com.fmi.raceeventmanagement.service;
 
 import com.fmi.raceeventmanagement.dto.EventDTO;
 import com.fmi.raceeventmanagement.dto.RacerDTO;
+import com.fmi.raceeventmanagement.exceptions.ValidationException;
 import com.fmi.raceeventmanagement.mapper.EventMapper;
 import com.fmi.raceeventmanagement.mapper.RacerMapper;
 import com.fmi.raceeventmanagement.model.Event;
@@ -59,13 +60,13 @@ public class EventService implements EventServiceAPI {
         var actualTrack = trackRepository.findById(trackId);
 
         if(actualTrack.isEmpty()) {
-            throw new EntityNotFoundException(String.format("Track with id %s is not already in DB", trackId));
+            throw new ValidationException(String.format("Track with id %s is not already in DB", trackId));
         }
 
         Event toCreate = new Event(name, actualTrack.get(), dateOfEvent);
 
         if(Set.of(teamRepository.findAll()).contains(toCreate)) {
-            throw new DataIntegrityViolationException(String.format("Event with name %s on track %s on a date %s " +
+            throw new ValidationException(String.format("Event with name %s on track %s on a date %s " +
                     "is already existed", name, actualTrack.get().getName(), dateOfEvent.toString()));
         }
 
@@ -79,13 +80,13 @@ public class EventService implements EventServiceAPI {
         var toUpdate = eventRepository.findById(event.getId());
 
         if (toUpdate.isEmpty()) {
-            throw new EntityNotFoundException(String.format("Event with id %s is not" +
+            throw new ValidationException(String.format("Event with id %s is not" +
                     " already in DB to be updated", event.getId()));
         }
 
         if (event.getName() != null) {
             if(event.getName().isBlank() || event.getName().isEmpty()) {
-                throw new IllegalArgumentException("Event: name need to have minimum 1 non-white space character");
+                throw new ValidationException("Need to have minimum 1 non-white space character", "name");
             }
 
             toUpdate.get().setName(event.getName());
@@ -99,18 +100,20 @@ public class EventService implements EventServiceAPI {
 
             toUpdate.get().setTeams(event.getTeams());
         }
+
+        eventRepository.save(toUpdate.get());
     }
 
     @Override
     public void addTeamToEvent(Integer eventId, Team team) {
         if (team == null) {
-            throw new IllegalArgumentException("Team cannot be null");
+            throw new ValidationException("Cannot be null", "Team");
         }
 
         var toUpdate = eventRepository.findById(eventId);
 
         if (toUpdate.isEmpty()) {
-            throw new EntityNotFoundException(String.format("Event with id %s is not in DB", eventId));
+            throw new ValidationException(String.format("Event with id %s is not in DB", eventId));
         }
 
         assignEventToTeams(toUpdate.get(), Set.of(team));
@@ -121,7 +124,7 @@ public class EventService implements EventServiceAPI {
         var toUpdate = eventRepository.findById(eventId);
 
         if (toUpdate.isEmpty()) {
-            throw new EntityNotFoundException(String.format("Event with id %s is not in DB", eventId));
+            throw new ValidationException(String.format("Event with id %s is not in DB", eventId));
         }
 
         teamRepository.findById(name).ifPresent(t -> {
@@ -193,7 +196,7 @@ public class EventService implements EventServiceAPI {
                 actualTeam.get().getEvents().add(event);
                 teamRepository.save(actualTeam.get());
             } else {
-                throw new EntityNotFoundException(String.format("Team with id %s was not found in DB", t.getName()));
+                throw new ValidationException(String.format("Team with id %s was not found in DB", t.getName()));
             }
         });
     }
